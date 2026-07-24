@@ -1,0 +1,78 @@
+{% extends "app_shell.html" %}
+{% block title %}Customize · {{ resume.title }}{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/resumes.css') }}">{% endblock %}
+{% block topbar_title %}Customize Appearance{% endblock %}
+
+{% block content %}
+<div class="section-header">
+  <div>
+    <h1 class="section-title">Customize</h1>
+    <p class="text-muted text-sm mb-0">Colors, fonts, and layout for "{{ resume.title }}"</p>
+  </div>
+  <div class="flex-gap">
+    <a href="{{ url_for('resumes.preview', resume_id=resume.id) }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-eye"></i> Preview</a>
+    <a href="{{ url_for('resumes.edit', resume_id=resume.id) }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-arrow-left"></i> Back to Editor</a>
+  </div>
+</div>
+
+<div class="card" style="max-width: 640px;">
+  <div class="card-body">
+    <form method="POST">
+      {{ '' }}
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="form-group">
+        <label class="form-label">Primary Color</label>
+        <input type="color" name="primary_color" value="{{ style.primary_color }}" style="width:70px; height:38px; border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:2px; cursor:pointer;">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Font</label>
+          <select name="font" class="form-control">
+            {% for f in ["Inter", "Plus Jakarta Sans", "Georgia", "Times New Roman", "Arial"] %}
+              <option value="{{ f }}" {% if style.font == f %}selected{% endif %}>{{ f }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Header Style</label>
+          <select name="header_style" class="form-control">
+            <option value="centered" {% if style.header_style == 'centered' %}selected{% endif %}>Centered</option>
+            <option value="left" {% if style.header_style == 'left' %}selected{% endif %}>Left-Aligned</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Layout</label>
+          <select name="layout" class="form-control">
+            <option value="single-column" {% if style.layout == 'single-column' %}selected{% endif %}>Single Column</option>
+            <option value="two-column" {% if style.layout == 'two-column' %}selected{% endif %}>Two Column</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Margins</label>
+          <select name="margin" class="form-control">
+            <option value="narrow" {% if style.margin == 'narrow' %}selected{% endif %}>Narrow</option>
+            <option value="normal" {% if style.margin == 'normal' %}selected{% endif %}>Normal</option>
+            <option value="wide" {% if style.margin == 'wide' %}selected{% endif %}>Wide</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Line Spacing</label>
+        <select name="line_spacing" class="form-control">
+          <option value="compact" {% if style.line_spacing == 'compact' %}selected{% endif %}>Compact</option>
+          <option value="normal" {% if style.line_spacing == 'normal' %}selected{% endif %}>Normal</option>
+          <option value="relaxed" {% if style.line_spacing == 'relaxed' %}selected{% endif %}>Relaxed</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Save Customization</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

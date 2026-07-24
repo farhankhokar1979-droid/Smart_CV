@@ -1,0 +1,72 @@
+/* ============================================================
+   PROFILE.CSS — templates/profile/*
+   SmartCV — violet/teal palette, matches base.css component system
+   ============================================================ */
+
+.profile-header {
+  display: flex; align-items: center; gap: 20px;
+  padding: 24px;
+}
+.profile-avatar {
+  width: 84px; height: 84px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--violet), var(--violet-light));
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 28px; font-weight: 800;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  flex-shrink: 0;
+}
+.profile-name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; font-weight: 800; }
+.profile-email { color: var(--text-muted); font-size: 13.5px; margin-top: 2px; }
+
+.profile-links { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+.profile-link-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 50px;
+  background: var(--violet-pale); color: var(--violet);
+  border: 1px solid transparent;
+  font-size: 12px; font-weight: 600;
+}
+
+.profile-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+@media (max-width: 700px) { .profile-form-grid { grid-template-columns: 1fr; } }
+
+.avatar-dropzone {
+  position: relative;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+  background: var(--bg);
+}
+.avatar-dropzone:hover,
+.avatar-dropzone.is-dragover {
+  border-color: var(--violet);
+  background: var(--violet-pale);
+}
+.avatar-dropzone img {
+  max-width: 120px;
+  max-height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto;
+  display: block;
+}
+.avatar-dropzone-empty i {
+  font-size: 28px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  display: block;
+}
+.avatar-dropzone p {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin: 6px 0 0;
+}
+.avatar-dropzone-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}

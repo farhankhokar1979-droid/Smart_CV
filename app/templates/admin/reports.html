@@ -1,0 +1,93 @@
+{% extends "app_shell.html" %}
+{% block title %}Reports · SmartCV{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">{% endblock %}
+{% block topbar_title %}Reports{% endblock %}
+
+{% block content %}
+<div class="data-page-header">
+  <div>
+    <h1 class="data-page-title">Reports</h1>
+    <p class="data-page-sub">System-wide statistics and usage breakdowns.</p>
+  </div>
+  <a href="{{ url_for('admin.logs') }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-list"></i> View System Logs</a>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon violet"><i class="fa-solid fa-users"></i></div>
+    <div><div class="stat-number">{{ total_users }}</div><div class="stat-label">Total Users</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon accent"><i class="fa-solid fa-file-lines"></i></div>
+    <div><div class="stat-number">{{ total_resumes }}</div><div class="stat-label">Total Resumes</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon blue"><i class="fa-solid fa-gauge-high"></i></div>
+    <div><div class="stat-number">{{ avg_ats }}</div><div class="stat-label">Avg ATS Score</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon pink"><i class="fa-solid fa-star"></i></div>
+    <div><div class="stat-number">{{ avg_resume_score }}</div><div class="stat-label">Avg Resume Score</div></div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="data-card">
+    <div class="data-card-header"><h2 class="data-card-title"><i class="fa-solid fa-user-tag"></i> Users by Role</h2></div>
+    <div style="padding: 18px 22px;">
+      {% for role, count in users_by_role.items() %}
+        <div class="flex-between mb-2">
+          <span class="text-sm">{{ role|title }}</span>
+          <span class="badge badge-primary">{{ count }}</span>
+        </div>
+      {% endfor %}
+      {% if not users_by_role %}<p class="text-muted text-sm">No data yet.</p>{% endif %}
+    </div>
+  </div>
+
+  <div class="data-card">
+    <div class="data-card-header"><h2 class="data-card-title"><i class="fa-solid fa-layer-group"></i> Resumes by Template Category</h2></div>
+    <div style="padding: 18px 22px;">
+      {% for category, count in resumes_by_category %}
+        <div class="flex-between mb-2">
+          <span class="text-sm">{{ category }}</span>
+          <span class="badge badge-accent">{{ count }}</span>
+        </div>
+      {% endfor %}
+      {% if not resumes_by_category %}<p class="text-muted text-sm">No resumes using templates yet.</p>{% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="data-card">
+  <div class="data-card-header">
+    <h2 class="data-card-title"><i class="fa-solid fa-ranking-star"></i> Most-Used Templates</h2>
+  </div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Template</th><th>Resumes Using It</th></tr></thead>
+      <tbody>
+        {% for name, uses in template_usage %}
+        <tr><td>{{ name }}</td><td><span class="badge badge-primary">{{ uses }}</span></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% if not template_usage %}<div class="empty-state"><i class="fa-regular fa-file-lines"></i><p>No template usage yet.</p></div>{% endif %}
+  </div>
+</div>
+
+<div class="data-card">
+  <div class="data-card-header">
+    <h2 class="data-card-title"><i class="fa-solid fa-chart-column"></i> Activity Breakdown</h2>
+  </div>
+  <div style="padding: 18px 22px;">
+    {% for action, count in action_counts.items() %}
+      <div class="flex-between mb-2">
+        <span class="text-sm">{{ action|replace('_', ' ')|title }}</span>
+        <span class="badge badge-secondary">{{ count }}</span>
+      </div>
+    {% endfor %}
+    {% if not action_counts %}<p class="text-muted text-sm">No activity logged yet.</p>{% endif %}
+  </div>
+</div>
+{% endblock %}

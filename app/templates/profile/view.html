@@ -1,0 +1,44 @@
+{% extends "app_shell.html" %}
+{% block title %}Profile · SmartCV{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">{% endblock %}
+{% block topbar_title %}Profile{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <div class="profile-header">
+      {% if user.profile and user.profile.profile_picture %}
+        <img src="{{ url_for('static', filename=user.profile.profile_picture) }}" class="profile-avatar" style="object-fit: cover;" alt="{{ user.full_name }}">
+      {% else %}
+        <div class="profile-avatar">{{ user.full_name[0]|upper }}</div>
+      {% endif %}
+      <div>
+        <div class="profile-name">{{ user.full_name }}</div>
+        <div class="profile-email">{{ user.email }}</div>
+        {% if user.profile and (user.profile.phone or user.profile.address) %}
+          <div class="text-muted text-sm" style="margin-top:6px;">
+            {% if user.profile.phone %}<i class="fa-solid fa-phone"></i> {{ user.profile.phone }}{% endif %}
+            {% if user.profile.phone and user.profile.address %} &middot; {% endif %}
+            {% if user.profile.address %}<i class="fa-solid fa-location-dot"></i> {{ user.profile.address }}{% endif %}
+          </div>
+        {% endif %}
+        <div class="profile-links">
+          {% if user.profile and user.profile.linkedin %}
+            <a href="{{ user.profile.linkedin }}" target="_blank" class="profile-link-chip"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
+          {% endif %}
+          {% if user.profile and user.profile.github %}
+            <a href="{{ user.profile.github }}" target="_blank" class="profile-link-chip"><i class="fa-brands fa-github"></i> GitHub</a>
+          {% endif %}
+          {% if user.profile and user.profile.portfolio %}
+            <a href="{{ user.profile.portfolio }}" target="_blank" class="profile-link-chip"><i class="fa-solid fa-globe"></i> Portfolio</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer flex-between">
+    <a href="{{ url_for('auth.change_password') }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-key"></i> Change Password</a>
+    <a href="{{ url_for('profile.edit') }}" class="btn btn-primary btn-sm"><i class="fa-solid fa-user-pen"></i> Edit Profile</a>
+  </div>
+</div>
+{% endblock %}

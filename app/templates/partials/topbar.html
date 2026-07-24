@@ -1,0 +1,21 @@
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="page-title">{% block topbar_title %}{{ page_title|default("Dashboard") }}{% endblock %}</div>
+  </div>
+  <div class="topbar-right">
+    <div class="search-bar">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Search resumes...">
+    </div>
+    <button type="button" class="topbar-btn">
+      <i class="fa-regular fa-bell"></i>
+      <span class="badge-dot"></span>
+    </button>
+    <div class="topbar-divider"></div>
+    {% if current_user.is_authenticated %}
+    <a href="{{ url_for('auth.logout') }}" class="btn btn-outline btn-sm">
+      <i class="fa-solid fa-right-from-bracket"></i> Logout
+    </a>
+    {% endif %}
+  </div>
+</header>

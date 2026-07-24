@@ -1,0 +1,91 @@
+/* ============================================================
+   ADMIN.CSS — templates/admin/* (user/template/report management)
+   SmartCV — mirrors MediMart's tables.css data-card/data-table pattern
+   ============================================================ */
+
+.data-page-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
+}
+.data-page-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 22px; font-weight: 800; }
+.data-page-sub { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+.data-page-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+.data-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.data-card-header {
+  padding: 16px 22px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  gap: 12px; flex-wrap: wrap;
+}
+.data-card-title { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.data-count-pill {
+  display: inline-flex; align-items: center;
+  background: var(--violet-pale); color: var(--violet);
+  font-size: 11px; font-weight: 700;
+  padding: 2px 9px; border-radius: 50px;
+}
+.data-toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.toolbar-search {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 50px;
+  padding: 7px 14px;
+  transition: border-color var(--transition);
+  min-width: 200px;
+}
+.toolbar-search:focus-within { border-color: var(--violet); }
+.toolbar-search i { color: var(--text-muted); font-size: 13px; }
+.toolbar-search input { border: none; background: none; outline: none; font-size: 13px; width: 100%; }
+.toolbar-filter {
+  padding: 7px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 50px;
+  font-size: 13px;
+  background: var(--surface);
+  cursor: pointer; outline: none; appearance: none;
+  padding-right: 30px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 11px center;
+  transition: border-color var(--transition);
+}
+.toolbar-filter:focus { border-color: var(--violet); }
+
+/* ── TABLE STYLES ────────────────────────────────────────────*/
+.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.data-table thead th {
+  padding: 10px 16px; text-align: left;
+  background: var(--surface-2); color: var(--text-muted);
+  font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  position: sticky; top: 0;
+}
+.data-table tbody td { padding: 12px 16px; border-bottom: 1px solid var(--border-light); vertical-align: middle; }
+.data-table tbody tr { transition: background var(--transition); }
+.data-table tbody tr:last-child td { border-bottom: none; }
+.data-table tbody tr:hover td { background: var(--surface-2); }
+
+.entity-cell { display: flex; align-items: center; gap: 11px; }
+.entity-avatar {
+  width: 38px; height: 38px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; flex-shrink: 0;
+  background: var(--violet-pale);
+}
+.entity-avatar.person {
+  background: linear-gradient(135deg, var(--violet), #a78bfa);
+  color: white; font-size: 14px; font-weight: 700;
+  border-radius: 50%;
+}
+
+/* ── ADMIN STAT ROW (reuses dashboard stat-card, scoped here for role clarity) */
+.admin-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; gap: 12px; flex-wrap: wrap; }

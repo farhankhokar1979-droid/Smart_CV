@@ -1,0 +1,54 @@
+{% extends "app_shell.html" %}
+{% block title %}System Logs · SmartCV{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">{% endblock %}
+{% block topbar_title %}System Logs{% endblock %}
+
+{% block content %}
+<div class="data-page-header">
+  <div>
+    <h1 class="data-page-title">System Logs</h1>
+    <p class="data-page-sub">{{ pagination.total }} total events</p>
+  </div>
+  <a href="{{ url_for('admin.reports') }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-chart-column"></i> View Reports</a>
+</div>
+
+<div class="data-card">
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>User</th><th>Action</th><th>Details</th><th>When</th></tr></thead>
+      <tbody>
+        {% for entry in entries %}
+        <tr>
+          <td>
+            {% if entry.user %}
+              <div class="entity-cell">
+                <div class="entity-avatar person">{{ entry.user.full_name[0]|upper }}</div>
+                {{ entry.user.full_name }}
+              </div>
+            {% else %}
+              <span class="text-muted">—</span>
+            {% endif %}
+          </td>
+          <td><span class="badge badge-primary">{{ entry.action|replace('_', ' ')|title }}</span></td>
+          <td class="text-sm text-muted">{{ entry.details or "—" }}</td>
+          <td class="text-sm text-muted">{{ entry.created_at.strftime('%b %d, %Y %I:%M %p') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% if not entries %}<div class="empty-state"><i class="fa-regular fa-clock"></i><p>No activity logged yet.</p></div>{% endif %}
+  </div>
+</div>
+
+{% if pagination.pages > 1 %}
+<div class="flex-gap mt-4">
+  {% if pagination.has_prev %}
+    <a href="{{ url_for('admin.logs', page=pagination.prev_num) }}" class="btn btn-outline btn-sm">&larr; Newer</a>
+  {% endif %}
+  <span class="text-sm text-muted" style="align-self:center;">Page {{ pagination.page }} of {{ pagination.pages }}</span>
+  {% if pagination.has_next %}
+    <a href="{{ url_for('admin.logs', page=pagination.next_num) }}" class="btn btn-outline btn-sm">Older &rarr;</a>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}

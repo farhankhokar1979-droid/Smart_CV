@@ -1,0 +1,120 @@
+{% extends "app_shell.html" %}
+{% block title %}Edit Profile · SmartCV{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">{% endblock %}
+{% block topbar_title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 640px;">
+  <div class="card-header">
+    <h2 class="card-title"><i class="fa-solid fa-user-pen"></i> Edit Profile</h2>
+  </div>
+  <div class="card-body">
+    <form method="POST" enctype="multipart/form-data" novalidate>
+      {{ form.hidden_tag() }}
+
+      <div class="form-group">
+        {{ form.full_name.label(class="form-label") }}
+        {{ form.full_name(class="form-control") }}
+        {% for error in form.full_name.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+      </div>
+
+      <div class="form-group">
+        {{ form.profile_picture.label(class="form-label") }}
+        <div class="avatar-dropzone" id="avatarDropzone">
+          <img id="avatarPreviewImg" src="{% if current_user.profile and current_user.profile.profile_picture %}{{ url_for('static', filename=current_user.profile.profile_picture) }}{% endif %}"
+               style="{% if not (current_user.profile and current_user.profile.profile_picture) %}display:none;{% endif %}" alt="">
+          <div id="avatarDropzoneEmpty" class="avatar-dropzone-empty" style="{% if current_user.profile and current_user.profile.profile_picture %}display:none;{% endif %}">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <p>Drag &amp; drop a photo here, or click to browse</p>
+          </div>
+          {{ form.profile_picture(class="avatar-dropzone-input", id="avatarInput") }}
+        </div>
+        {% for error in form.profile_picture.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+        <div class="form-hint">PNG or JPG only.</div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          {{ form.phone.label(class="form-label") }}
+          {{ form.phone(class="form-control", placeholder="+92 300 1234567") }}
+        </div>
+        <div class="form-group">
+          {{ form.address.label(class="form-label") }}
+          {{ form.address(class="form-control", placeholder="City, Country") }}
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <h3 class="text-sm font-bold mb-2">Social Links</h3>
+
+      <div class="form-group">
+        {{ form.linkedin.label(class="form-label") }}
+        {{ form.linkedin(class="form-control", placeholder="https://linkedin.com/in/yourname") }}
+        {% for error in form.linkedin.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+      </div>
+      <div class="form-group">
+        {{ form.github.label(class="form-label") }}
+        {{ form.github(class="form-control", placeholder="https://github.com/yourname") }}
+        {% for error in form.github.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+      </div>
+      <div class="form-group">
+        {{ form.portfolio.label(class="form-label") }}
+        {{ form.portfolio(class="form-control", placeholder="https://yourportfolio.com") }}
+        {% for error in form.portfolio.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+      </div>
+
+      <div class="flex-gap">
+        {{ form.submit(class="btn btn-primary") }}
+        <a href="{{ url_for('profile.view') }}" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block page_js %}
+{{ super() }}
+<script>
+  (function () {
+    var dropzone = document.getElementById("avatarDropzone");
+    var input = document.getElementById("avatarInput");
+    var previewImg = document.getElementById("avatarPreviewImg");
+    var emptyState = document.getElementById("avatarDropzoneEmpty");
+
+    function showFile(file) {
+      if (!file || !file.type.startsWith("image/")) return;
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        previewImg.src = e.target.result;
+        previewImg.style.display = "block";
+        emptyState.style.display = "none";
+      };
+      reader.readAsDataURL(file);
+    }
+
+    input.addEventListener("change", function () {
+      if (input.files && input.files[0]) showFile(input.files[0]);
+    });
+
+    ["dragenter", "dragover"].forEach(function (evt) {
+      dropzone.addEventListener(evt, function (e) {
+        e.preventDefault(); e.stopPropagation();
+        dropzone.classList.add("is-dragover");
+      });
+    });
+    ["dragleave", "drop"].forEach(function (evt) {
+      dropzone.addEventListener(evt, function (e) {
+        e.preventDefault(); e.stopPropagation();
+        dropzone.classList.remove("is-dragover");
+      });
+    });
+    dropzone.addEventListener("drop", function (e) {
+      var file = e.dataTransfer.files[0];
+      if (file) {
+        input.files = e.dataTransfer.files;
+        showFile(file);
+      }
+    });
+  })();
+</script>
+{% endblock %}

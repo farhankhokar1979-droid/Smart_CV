@@ -1,0 +1,41 @@
+{% extends "app_shell.html" %}
+{% block title %}History · {{ resume.title }}{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/resumes.css') }}">{% endblock %}
+{% block topbar_title %}Resume History{% endblock %}
+
+{% block content %}
+<div class="section-header">
+  <div>
+    <h1 class="section-title">History: {{ resume.title }}</h1>
+    <p class="text-muted text-sm mb-0">Auto-saved snapshots, most recent first (last {{ entries|length }} kept).</p>
+  </div>
+  <a href="{{ url_for('resumes.edit', resume_id=resume.id) }}" class="btn btn-outline btn-sm">
+    <i class="fa-solid fa-arrow-left"></i> Back to Editor
+  </a>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    {% if entries %}
+      {% for entry in entries %}
+      <div class="top-item">
+        <div class="top-item-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+        <div style="flex:1;">
+          <div class="top-item-name">{{ entry.title }}</div>
+          <div class="top-item-sold">{{ entry.job_title or "No target job title" }} &middot; {{ entry.created_at.strftime('%b %d, %Y %I:%M %p') }}</div>
+        </div>
+        <form method="POST" action="{{ url_for('resumes.restore', resume_id=resume.id, history_id=entry.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-outline btn-sm"><i class="fa-solid fa-rotate-left"></i> Restore</button>
+        </form>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        <i class="fa-regular fa-clock"></i>
+        <p>No history yet — edits are snapshotted automatically as you work.</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

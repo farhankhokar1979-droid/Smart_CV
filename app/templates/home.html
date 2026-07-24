@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}SmartCV — AI-Powered Resume Builder{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">{% endblock %}
+
+{% block body %}
+<nav class="landing-nav" style="background: var(--violet-dark);">
+  <div class="landing-nav-brand">
+    <i class="fa-solid fa-file-lines"></i> SmartCV
+  </div>
+  <div class="flex-gap">
+    <a href="{{ url_for('auth.login') }}" class="btn btn-outline btn-sm" style="color:#fff; border-color: rgba(255,255,255,0.4);">Log In</a>
+    <a href="{{ url_for('auth.register') }}" class="btn btn-accent btn-sm">Sign Up</a>
+  </div>
+</nav>
+
+<section class="landing-hero">
+  <h1>Build ATS-ready resumes with fully offline AI</h1>
+  <p>Write, improve, parse, and score your resume — no cloud, no paid APIs, no internet required.</p>
+  <a href="{{ url_for('auth.register') }}" class="btn btn-accent"><i class="fa-solid fa-rocket"></i> Get Started Free</a>
+  <a href="{{ url_for('auth.login') }}" class="btn btn-outline" style="color:#fff; border-color: rgba(255,255,255,0.5);">Log In</a>
+</section>
+
+<section class="landing-features">
+  <div class="feature-card">
+    <div class="feature-card-icon"><i class="fa-solid fa-brain"></i></div>
+    <h3>Offline AI Assistant</h3>
+    <p class="text-muted text-sm">Local models generate summaries, bullet points, and skill suggestions — no internet needed.</p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-card-icon"><i class="fa-solid fa-chart-line"></i></div>
+    <h3>ATS Score Analyzer</h3>
+    <p class="text-muted text-sm">Instantly see keyword matches, formatting issues, and missing sections.</p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-card-icon"><i class="fa-solid fa-palette"></i></div>
+    <h3>Professional Templates</h3>
+    <p class="text-muted text-sm">Choose from ATS-friendly, modern, and creative templates — fully customizable.</p>
+  </div>
+</section>
+{% endblock %}

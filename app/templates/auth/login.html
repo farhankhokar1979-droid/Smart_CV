@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Log In · SmartCV{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">{% endblock %}
+
+{% block body %}
+{% include "partials/flash_messages.html" %}
+<div class="auth-page">
+  <div class="auth-left">
+    <div class="auth-brand">
+      <div class="auth-brand-icon"><i class="fa-solid fa-file-lines"></i></div>
+      <div class="auth-brand-name">Smart<span>CV</span></div>
+    </div>
+    <h1 class="auth-left-title">Build ATS-ready resumes, fully offline</h1>
+    <p class="auth-left-sub">Local AI writes, improves, and scores your resume — no cloud, no paid APIs.</p>
+    <div class="auth-features">
+      <div class="auth-feature">
+        <div class="auth-feature-icon"><i class="fa-solid fa-brain"></i></div>
+        <div class="auth-feature-text">Offline AI resume writer &amp; improver</div>
+      </div>
+      <div class="auth-feature">
+        <div class="auth-feature-icon"><i class="fa-solid fa-chart-line"></i></div>
+        <div class="auth-feature-text">Instant ATS score &amp; keyword analysis</div>
+      </div>
+      <div class="auth-feature">
+        <div class="auth-feature-icon"><i class="fa-solid fa-palette"></i></div>
+        <div class="auth-feature-text">Professional, customizable templates</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-right">
+    <div class="auth-form-box">
+      <h2 class="auth-form-title">Welcome back</h2>
+      <p class="auth-form-sub">New to SmartCV? <a href="{{ url_for('auth.register') }}">Create an account</a></p>
+
+      <form method="POST" novalidate>
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+          {{ form.email.label(class="form-label") }}
+          <div class="input-group">
+            <i class="fa-regular fa-envelope input-icon"></i>
+            {{ form.email(class="form-control", placeholder="you@example.com") }}
+          </div>
+          {% for error in form.email.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+        </div>
+
+        <div class="form-group">
+          {{ form.password.label(class="form-label") }}
+          <div class="input-group">
+            <i class="fa-solid fa-lock input-icon"></i>
+            {{ form.password(class="form-control", placeholder="••••••••") }}
+          </div>
+          {% for error in form.password.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+        </div>
+
+        <div class="auth-links">
+          <label class="form-check">{{ form.remember_me() }} Remember me</label>
+          <a href="{{ url_for('auth.forgot_password') }}">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn-auth">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> Log In
+        </button>
+      </form>
+
+      <div class="auth-footer">Don't have an account? <a href="{{ url_for('auth.register') }}">Sign up</a></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

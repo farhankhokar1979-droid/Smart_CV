@@ -1,0 +1,91 @@
+{% extends "app_shell.html" %}
+{% block title %}Dashboard · SmartCV{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">{% endblock %}
+{% block topbar_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="hero-banner">
+  <div class="hero-badge"><i class="fa-solid fa-sparkles"></i> Offline AI-Powered</div>
+  <h1 class="hero-title">Welcome back, {{ current_user.full_name.split(' ')[0] }}</h1>
+  <p class="hero-subtitle">Keep your resumes sharp and ATS-ready — all processing happens on your own device.</p>
+  <div class="hero-actions">
+    <a href="{{ url_for('resumes.index') }}" class="hero-btn-white"><i class="fa-solid fa-plus"></i> Create Resume</a>
+    <a href="{{ url_for('resumes.index') }}" class="hero-btn-ghost"><i class="fa-solid fa-file-lines"></i> View All Resumes</a>
+  </div>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon violet"><i class="fa-solid fa-file-lines"></i></div>
+    <div>
+      <div class="stat-number">{{ resume_count }}</div>
+      <div class="stat-label">Total Resumes</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon accent"><i class="fa-solid fa-chart-line"></i></div>
+    <div>
+      <div class="stat-number">—</div>
+      <div class="stat-label">Average ATS Score</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon blue"><i class="fa-solid fa-download"></i></div>
+    <div>
+      <div class="stat-number">—</div>
+      <div class="stat-label">Recent Downloads</div>
+    </div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> Recent Resumes</h2>
+      <a href="{{ url_for('resumes.index') }}" class="btn btn-outline btn-sm">View All</a>
+    </div>
+    <div class="card-body">
+      {% if recent_resumes %}
+        {% for resume in recent_resumes %}
+          <div class="top-item">
+            <div class="top-item-icon"><i class="fa-solid fa-file-lines"></i></div>
+            <div style="flex:1;">
+              <div class="top-item-name">{{ resume.title }}</div>
+              <div class="top-item-sold">Updated {{ resume.updated_at.strftime('%b %d, %Y') }}</div>
+            </div>
+            <span class="badge badge-primary">{{ resume.ats_score|round|int }} ATS</span>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-state">
+          <i class="fa-regular fa-file-lines"></i>
+          <p>No resumes yet — create your first one to get started.</p>
+          <a href="{{ url_for('resumes.index') }}" class="btn btn-primary btn-sm">Create Resume</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Suggestions</h2>
+    </div>
+    <div class="card-body">
+      <div class="alert-card low-stock">
+        <i class="fa-solid fa-lightbulb alert-card-icon"></i>
+        <div>
+          <div class="alert-card-title">Add a professional summary</div>
+          <div class="alert-card-sub">Boosts your resume completeness score.</div>
+        </div>
+      </div>
+      <div class="alert-card expiring">
+        <i class="fa-solid fa-lightbulb alert-card-icon"></i>
+        <div>
+          <div class="alert-card-title">Add 2–3 more relevant keywords</div>
+          <div class="alert-card-sub">Improves your ATS match for target roles.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

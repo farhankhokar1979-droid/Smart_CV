@@ -1,0 +1,28 @@
+{% extends "app_shell.html" %}
+{% block title %}Preview · {{ resume.title }}{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/resumes.css') }}">{% endblock %}
+{% block topbar_title %}Preview{% endblock %}
+
+{% block content %}
+<div class="section-header">
+  <div>
+    <h1 class="section-title">Preview</h1>
+    <p class="text-muted text-sm mb-0">{{ resume.template.name if resume.template else "Default layout" }}</p>
+  </div>
+  <div class="flex-gap">
+    <a href="{{ url_for('resumes.export_pdf_route', resume_id=resume.id) }}" class="btn btn-accent btn-sm"><i class="fa-solid fa-file-pdf"></i> Export PDF</a>
+    <a href="{{ url_for('resumes.export_docx_route', resume_id=resume.id) }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-file-word"></i> Export DOCX</a>
+    <a href="{{ url_for('resumes.choose_template', resume_id=resume.id) }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-swatchbook"></i> Change Template</a>
+    <a href="{{ url_for('resumes.customize', resume_id=resume.id) }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-sliders"></i> Customize</a>
+    <a href="{{ url_for('resumes.edit', resume_id=resume.id) }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-arrow-left"></i> Back to Editor</a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body" style="background: #f0f0f5; padding: 32px;">
+    <div style="box-shadow: var(--shadow-lg); border-radius: 4px; overflow: hidden;">
+      {{ rendered_html|safe }}
+    </div>
+  </div>
+</div>
+{% endblock %}

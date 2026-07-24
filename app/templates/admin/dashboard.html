@@ -1,0 +1,51 @@
+{% extends "app_shell.html" %}
+{% block title %}Admin · SmartCV{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">{% endblock %}
+{% block topbar_title %}Admin Panel{% endblock %}
+
+{% block content %}
+<div class="data-page-header">
+  <div>
+    <h1 class="data-page-title">Admin Overview</h1>
+    <p class="data-page-sub">System-wide stats across users, resumes, and templates.</p>
+  </div>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon violet"><i class="fa-solid fa-users"></i></div>
+    <div>
+      <div class="stat-number">{{ stats.user_count }}</div>
+      <div class="stat-label">Users</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon accent"><i class="fa-solid fa-file-lines"></i></div>
+    <div>
+      <div class="stat-number">{{ stats.resume_count }}</div>
+      <div class="stat-label">Resumes</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon blue"><i class="fa-solid fa-layer-group"></i></div>
+    <div>
+      <div class="stat-number">{{ stats.template_count }}</div>
+      <div class="stat-label">Templates</div>
+    </div>
+  </div>
+</div>
+
+<div class="data-card">
+  <div class="data-card-header">
+    <h2 class="data-card-title"><i class="fa-solid fa-list-check"></i> Overview</h2>
+  </div>
+  <div style="padding: 22px;">
+    <p class="text-muted mb-3">User management and AI rules are built out across later phases.</p>
+    <div class="flex-gap">
+      <a href="{{ url_for('admin.templates_list') }}" class="btn btn-primary btn-sm"><i class="fa-solid fa-layer-group"></i> Manage Templates</a>
+      <a href="{{ url_for('admin.reports') }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-chart-column"></i> Reports</a>
+      <a href="{{ url_for('admin.logs') }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-list"></i> System Logs</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

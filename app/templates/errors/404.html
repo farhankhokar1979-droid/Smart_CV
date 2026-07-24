@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}404 Error · SmartCV{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/errors.css') }}">{% endblock %}
+{% block body %}
+<div class="error-page">
+  <div class="error-code">404</div>
+  <p class="error-message">The page you're looking for doesn't exist.</p>
+  <a href="{{ url_for('main.home') }}" class="btn btn-primary"><i class="fa-solid fa-house"></i> Go Home</a>
+</div>
+{% endblock %}

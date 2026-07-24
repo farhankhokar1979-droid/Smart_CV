@@ -1,0 +1,21 @@
+/* ============================================================
+   ERRORS.CSS — templates/errors/*
+   SmartCV — violet/teal palette, matches base.css component system
+   ============================================================ */
+
+.error-page {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 24px;
+}
+.error-code {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 5.5rem; font-weight: 900;
+  background: linear-gradient(135deg, var(--violet), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+}
+.error-message { color: var(--text-muted); margin: 10px 0 24px; font-size: 14.5px; }

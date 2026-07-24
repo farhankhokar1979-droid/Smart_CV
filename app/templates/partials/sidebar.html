@@ -1,0 +1,55 @@
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon"><i class="fa-solid fa-file-lines"></i></div>
+    <div class="brand-text">Smart<span>CV</span></div>
+    <button type="button" class="sidebar-toggle" id="sidebarToggle">
+      <i class="fa-solid fa-chevron-left"></i>
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="sidebar-label">Main</div>
+    <a href="{{ url_for('dashboard.index') }}" class="nav-item {% if request.endpoint == 'dashboard.index' %}active{% endif %}">
+      <span class="nav-icon"><i class="fa-solid fa-gauge"></i></span>
+      <span class="nav-label">Dashboard</span>
+    </a>
+    <a href="{{ url_for('resumes.index') }}" class="nav-item {% if request.endpoint and request.endpoint.startswith('resumes.') %}active{% endif %}">
+      <span class="nav-icon"><i class="fa-solid fa-file-lines"></i></span>
+      <span class="nav-label">My Resumes</span>
+    </a>
+    <a href="{{ url_for('profile.view') }}" class="nav-item {% if request.endpoint and request.endpoint.startswith('profile.') %}active{% endif %}">
+      <span class="nav-icon"><i class="fa-solid fa-user"></i></span>
+      <span class="nav-label">Profile</span>
+    </a>
+
+    {% if current_user.is_authenticated and current_user.is_admin %}
+    <div class="sidebar-label">Admin</div>
+    <a href="{{ url_for('admin.index') }}" class="nav-item {% if request.endpoint == 'admin.index' %}active{% endif %}">
+      <span class="nav-icon"><i class="fa-solid fa-screwdriver-wrench"></i></span>
+      <span class="nav-label">Admin Panel</span>
+    </a>
+    <a href="{{ url_for('admin.templates_list') }}" class="nav-item {% if request.endpoint and request.endpoint.startswith('admin.templates') %}active{% endif %}">
+      <span class="nav-icon"><i class="fa-solid fa-layer-group"></i></span>
+      <span class="nav-label">Templates</span>
+    </a>
+    <a href="{{ url_for('admin.reports') }}" class="nav-item {% if request.endpoint == 'admin.reports' %}active{% endif %}">
+      <span class="nav-icon"><i class="fa-solid fa-chart-column"></i></span>
+      <span class="nav-label">Reports</span>
+    </a>
+    <a href="{{ url_for('admin.logs') }}" class="nav-item {% if request.endpoint == 'admin.logs' %}active{% endif %}">
+      <span class="nav-icon"><i class="fa-solid fa-list"></i></span>
+      <span class="nav-label">System Logs</span>
+    </a>
+    {% endif %}
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">{{ current_user.full_name[0]|upper if current_user.is_authenticated else "?" }}</div>
+      <div class="user-info">
+        <div class="user-name">{{ current_user.full_name if current_user.is_authenticated else "Guest" }}</div>
+        <div class="user-role">{{ "Admin" if current_user.is_authenticated and current_user.is_admin else "User" }}</div>
+      </div>
+    </div>
+  </div>
+</aside>

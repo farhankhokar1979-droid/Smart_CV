@@ -1,0 +1,162 @@
+{% extends "app_shell.html" %}
+{% block title %}AI Assistant · {{ resume.title }}{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/resumes.css') }}">{% endblock %}
+{% block topbar_title %}AI Assistant{% endblock %}
+
+{% block content %}
+<div class="section-header">
+  <div>
+    <h1 class="section-title">AI Assistant</h1>
+    <p class="text-muted text-sm mb-0">For "{{ resume.title }}" — runs on a local Ollama model when available, offline heuristics otherwise.</p>
+  </div>
+  <a href="{{ url_for('resumes.edit', resume_id=resume.id) }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-arrow-left"></i> Back to Editor</a>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon violet"><i class="fa-solid fa-gauge-high"></i></div>
+    <div>
+      <div class="stat-number">{{ analysis.ats_score }}</div>
+      <div class="stat-label">ATS Score</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon accent"><i class="fa-solid fa-list-check"></i></div>
+    <div>
+      <div class="stat-number">{{ analysis.completeness_pct }}%</div>
+      <div class="stat-label">Completeness</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon blue"><i class="fa-solid fa-key"></i></div>
+    <div>
+      <div class="stat-number">{{ analysis.keyword_score if analysis.keyword_score is not none else "—" }}{% if analysis.keyword_score is not none %}%{% endif %}</div>
+      <div class="stat-label">Keyword Match</div>
+    </div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <!-- AI Resume Writer -->
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title"><i class="fa-solid fa-pen-nib"></i> AI Resume Writer</h2>
+    </div>
+    <div class="card-body">
+      <p class="text-muted text-sm mb-3">Generate a professional summary from your job title, skills, and experience.</p>
+      <form method="POST" action="{{ url_for('resumes.ai_generate_summary', resume_id=resume.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Summary</button>
+      </form>
+
+      {% if analysis.missing_sections %}
+      <div class="divider"></div>
+      <p class="text-sm font-bold mb-2">Missing Sections</p>
+      {% for m in analysis.missing_sections %}
+        <span class="badge badge-warning" style="margin: 0 4px 4px 0;">{{ m|title }}</span>
+      {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Skill Recommendation Engine -->
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title"><i class="fa-solid fa-lightbulb"></i> Recommended Skills</h2>
+    </div>
+    <div class="card-body">
+      {% if recommended_skills %}
+        <p class="text-muted text-sm mb-2">Based on "{{ resume.job_title or 'your target role' }}" — click to add:</p>
+        <div class="flex-gap" style="flex-wrap: wrap;">
+          {% for s in recommended_skills %}
+          <form method="POST" action="{{ url_for('resumes.ai_add_skill', resume_id=resume.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="skill_name" value="{{ s }}">
+            <button type="submit" class="badge badge-accent" style="border:none; cursor:pointer; font-family:inherit; font-size:11px;">
+              <i class="fa-solid fa-plus"></i> {{ s }}
+            </button>
+          </form>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-muted text-sm mb-0">No additional suggestions — your skills section already covers the common ones for this role.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- AI ATS Analyzer / Job Matcher -->
+<div class="card">
+  <div class="card-header">
+    <h2 class="card-title"><i class="fa-solid fa-magnifying-glass-chart"></i> ATS Analyzer &amp; Job Matcher</h2>
+  </div>
+  <div class="card-body">
+    <form method="POST" action="{{ url_for('resumes.ai_job_match', resume_id=resume.id) }}" class="mb-4">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="form-group">
+        <label class="form-label">Paste a Job Description</label>
+        <textarea name="job_description" class="form-control" rows="5" placeholder="Paste the job posting here to compare it against your resume...">{{ resume.target_job_description or '' }}</textarea>
+      </div>
+      <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-magnifying-glass"></i> Analyze Match</button>
+    </form>
+
+    {% if analysis.keyword_score is not none %}
+      <div class="grid-2">
+        <div>
+          <p class="text-sm font-bold mb-2">Matched Keywords ({{ analysis.matched_keywords|length }})</p>
+          {% for k in analysis.matched_keywords %}<span class="badge badge-success" style="margin:0 4px 4px 0;">{{ k }}</span>{% endfor %}
+          {% if not analysis.matched_keywords %}<p class="text-muted text-sm">None yet.</p>{% endif %}
+        </div>
+        <div>
+          <p class="text-sm font-bold mb-2">Missing Keywords ({{ analysis.missing_keywords|length }})</p>
+          {% for k in analysis.missing_keywords %}<span class="badge badge-danger" style="margin:0 4px 4px 0;">{{ k }}</span>{% endfor %}
+          {% if not analysis.missing_keywords %}<p class="text-muted text-sm">None — great match!</p>{% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if analysis.weak_bullets or analysis.long_sentences %}
+    <div class="divider"></div>
+    {% if analysis.weak_bullets %}
+      <p class="text-sm font-bold mb-2"><i class="fa-solid fa-triangle-exclamation text-red"></i> Weak Bullet Points</p>
+      {% for b in analysis.weak_bullets %}<div class="suggestion-item text-sm">{{ b }}...</div>{% endfor %}
+    {% endif %}
+    {% if analysis.long_sentences %}
+      <p class="text-sm font-bold mb-2" style="margin-top:12px;"><i class="fa-solid fa-triangle-exclamation text-red"></i> Long Sentences (28+ words)</p>
+      {% for b in analysis.long_sentences %}<div class="suggestion-item text-sm">{{ b }}...</div>{% endfor %}
+    {% endif %}
+    {% endif %}
+
+    {% if duplicates.duplicate_skills or duplicates.duplicate_bullets %}
+    <div class="divider"></div>
+    <p class="text-sm font-bold mb-2"><i class="fa-solid fa-copy text-red"></i> Possible Duplicates</p>
+    {% for s in duplicates.duplicate_skills %}<div class="suggestion-item text-sm">Repeated skill: {{ s }}</div>{% endfor %}
+    {% for b in duplicates.duplicate_bullets %}<div class="suggestion-item text-sm">Repeated bullet: {{ b }}...</div>{% endfor %}
+    {% endif %}
+  </div>
+</div>
+
+<!-- AI Resume Improver: per-entry improve buttons -->
+<div class="card">
+  <div class="card-header">
+    <h2 class="card-title"><i class="fa-solid fa-wand-sparkles"></i> Improve Entries</h2>
+  </div>
+  <div class="card-body">
+    {% if not improvable_entries %}
+      <p class="text-muted text-sm mb-0">Add some resume sections first — then you can improve individual entries here.</p>
+    {% endif %}
+    {% for item in improvable_entries %}
+      <div class="recent-list__item">
+        <div style="flex:1;">
+          <div class="text-sm font-bold">{{ item.label }}</div>
+          <div class="text-muted text-sm">{{ item.text[:100] }}{% if item.text|length > 100 %}...{% endif %}</div>
+        </div>
+        <form method="POST" action="{{ url_for('resumes.ai_improve_entry', resume_id=resume.id, section_id=item.section_id, entry_id=item.entry_id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-outline btn-sm"><i class="fa-solid fa-wand-magic-sparkles"></i> Improve</button>
+        </form>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

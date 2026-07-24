@@ -1,0 +1,72 @@
+<div class="resume-doc" style="
+  font-family: '{{ style.font }}', sans-serif;
+  line-height: {{ '1.6' if style.line_spacing == 'relaxed' else ('1.2' if style.line_spacing == 'compact' else '1.4') }};
+  padding: {{ '60px' if style.margin == 'wide' else ('20px' if style.margin == 'narrow' else '40px') }};
+  color: #1c1a26;
+  max-width: 800px;
+  min-height: 1123px;
+  box-sizing: border-box;
+  margin: 0 auto;
+  background: #fff;
+">
+  <div style="
+    text-align: {{ 'left' if style.header_style == 'left' else 'center' }};
+    border-bottom: 3px solid {{ style.primary_color }};
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+  ">
+    {% if resume.owner and resume.owner.profile and resume.owner.profile.profile_picture %}
+    <img src="{{ url_for('static', filename=resume.owner.profile.profile_picture) }}"
+         style="width:90px; height:90px; border-radius:50%; object-fit:cover; margin-bottom:12px; {% if style.header_style != 'left' %}margin-left:auto; margin-right:auto;{% endif %} display:block;">
+    {% endif %}    <h1 style="margin:0; font-size: 28px; color: {{ style.primary_color }};">{{ resume.owner.full_name if resume.owner else "Your Name" }}</h1>
+    {% if resume.job_title %}<p style="margin:4px 0 0; font-size:15px; color:#555;">{{ resume.job_title }}</p>{% endif %}
+  </div>
+
+  {% if style.layout == 'two-column' %}
+  <div style="display:flex; gap: 32px;">
+    <div style="flex: 1;">
+      {% for section in sections %}
+        {% if section.column == 'sidebar' %}
+        <div style="margin-bottom: 22px;">
+          <h2 style="font-size:14px; text-transform:uppercase; letter-spacing:.05em; color:{{ style.primary_color }}; border-bottom:1px solid #ddd; padding-bottom:4px;">{{ section.label }}</h2>
+          {% for entry in section.entries %}
+            <div style="font-size:13px; margin: 6px 0;">
+              {% for k, v in entry.items() %}{% if v %}<div>{{ v }}</div>{% endif %}{% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <div style="flex: 2;">
+      {% for section in sections %}
+        {% if section.column != 'sidebar' %}
+        <div style="margin-bottom: 22px;">
+          <h2 style="font-size:14px; text-transform:uppercase; letter-spacing:.05em; color:{{ style.primary_color }}; border-bottom:1px solid #ddd; padding-bottom:4px;">{{ section.label }}</h2>
+          {% for entry in section.entries %}
+            <div style="font-size:13.5px; margin: 8px 0;">
+              {% for k, v in entry.items() %}{% if v %}<div>{{ v }}</div>{% endif %}{% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% else %}
+    {% for section in sections %}
+    <div style="margin-bottom: 22px;">
+      <h2 style="font-size:14px; text-transform:uppercase; letter-spacing:.05em; color:{{ style.primary_color }}; border-bottom:1px solid #ddd; padding-bottom:4px;">{{ section.label }}</h2>
+      {% for entry in section.entries %}
+        <div style="font-size:13.5px; margin: 8px 0;">
+          {% for k, v in entry.items() %}{% if v %}<div>{{ v }}</div>{% endif %}{% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  {% endif %}
+
+  {% if not sections %}
+  <p style="color:#999; text-align:center; padding: 40px 0;">No sections yet — add content in the builder to see it here.</p>
+  {% endif %}
+</div>

@@ -1,0 +1,249 @@
+/* ============================================================
+   AUTH.CSS — templates/auth/* (Login, Register, Forgot/Change Password)
+   SmartCV — violet/teal palette, mirrors MediMart's auth layout
+   ============================================================ */
+
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--bg);
+}
+
+/* Left panel */
+.auth-left {
+  background: linear-gradient(160deg, var(--violet-dark) 0%, var(--violet-mid) 50%, var(--violet-light) 100%);
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  padding: 48px;
+  position: relative;
+  overflow: hidden;
+}
+.auth-left::before {
+  content: '';
+  position: absolute; top: -100px; left: -100px;
+  width: 400px; height: 400px;
+  background: rgba(255,255,255,.05);
+  border-radius: 50%;
+}
+.auth-left::after {
+  content: '';
+  position: absolute; bottom: -120px; right: -80px;
+  width: 300px; height: 300px;
+  background: rgba(255,255,255,.04);
+  border-radius: 50%;
+}
+.auth-brand {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 48px;
+  position: relative; z-index: 1;
+}
+.auth-brand-icon {
+  width: 52px; height: 52px;
+  background: rgba(255,255,255,.2);
+  backdrop-filter: blur(10px);
+  border: 1.5px solid rgba(255,255,255,.3);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 24px;
+}
+.auth-brand-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 26px;
+  font-weight: 900;
+  color: white;
+}
+.auth-brand-name span { opacity: .75; font-weight: 400; }
+
+.auth-left-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 36px;
+  font-weight: 900;
+  color: white;
+  line-height: 1.2;
+  margin-bottom: 16px;
+  position: relative; z-index: 1;
+}
+.auth-left-sub {
+  font-size: 15px;
+  color: rgba(255,255,255,.78);
+  line-height: 1.6;
+  margin-bottom: 40px;
+  position: relative; z-index: 1;
+}
+.auth-features {
+  display: flex; flex-direction: column; gap: 14px;
+  position: relative; z-index: 1;
+  width: 100%;
+}
+.auth-feature {
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(255,255,255,.1);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  color: white;
+  animation: featureSlide .6s ease forwards;
+  opacity: 0;
+}
+.auth-feature:nth-child(1) { animation-delay: .1s; }
+.auth-feature:nth-child(2) { animation-delay: .2s; }
+.auth-feature:nth-child(3) { animation-delay: .3s; }
+@keyframes featureSlide {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.auth-feature-icon {
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,.18);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px;
+  flex-shrink: 0;
+}
+.auth-feature-text { font-size: 13px; font-weight: 600; opacity: .9; }
+
+/* Right panel */
+.auth-right {
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  padding: 48px 56px;
+  overflow-y: auto;
+}
+.auth-form-box {
+  width: 100%;
+  max-width: 420px;
+  animation: authBoxIn .5s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+@keyframes authBoxIn {
+  from { opacity: 0; transform: translateY(30px) scale(.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.auth-form-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 28px;
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+.auth-form-sub {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 32px;
+}
+.auth-form-sub a { color: var(--violet); font-weight: 600; }
+
+/* Input with icon */
+.input-group {
+  position: relative;
+  display: flex; align-items: center;
+}
+.input-group .input-icon {
+  position: absolute; left: 14px;
+  color: var(--text-muted);
+  font-size: 15px;
+  pointer-events: none;
+}
+.input-group .form-control { padding-left: 42px; }
+.input-group .input-icon-right {
+  position: absolute; right: 14px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 15px;
+  transition: color var(--transition);
+}
+.input-group .input-icon-right:hover { color: var(--text); }
+
+/* Submit button */
+.btn-auth {
+  width: 100%;
+  padding: 13px;
+  border-radius: 50px;
+  background: var(--violet);
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin-top: 8px;
+}
+.btn-auth:hover {
+  background: var(--violet-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(109,40,217,.35);
+}
+.btn-auth:active { transform: scale(.98); }
+
+.auth-divider {
+  display: flex; align-items: center; gap: 14px;
+  margin: 20px 0;
+  color: var(--text-muted);
+  font-size: 12.5px;
+}
+.auth-divider::before, .auth-divider::after {
+  content: ''; flex: 1;
+  height: 1px; background: var(--border);
+}
+
+.auth-links {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 13px; margin-bottom: 20px;
+}
+.auth-links a { color: var(--violet); font-weight: 600; }
+
+.auth-footer {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 24px;
+}
+.auth-footer a { color: var(--violet); font-weight: 600; }
+
+/* Apply form multi-step feel */
+.apply-section {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 28px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+  animation: sectionIn .5s ease forwards;
+  opacity: 0;
+}
+.apply-section:nth-child(1) { animation-delay: .05s; }
+.apply-section:nth-child(2) { animation-delay: .12s; }
+.apply-section:nth-child(3) { animation-delay: .19s; }
+.apply-section:nth-child(4) { animation-delay: .26s; }
+@keyframes sectionIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.apply-section-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px; font-weight: 700;
+  margin-bottom: 18px;
+  display: flex; align-items: center; gap: 8px;
+  color: var(--violet);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+}
+
+/* Password strength indicator */
+.pass-strength { margin-top: 8px; }
+.pass-strength-bar {
+  height: 4px; background: var(--border); border-radius: 50px; overflow: hidden;
+}
+.pass-strength-fill {
+  height: 100%; border-radius: 50px;
+  transition: width .4s ease, background .4s ease;
+  width: 0%;
+}
+.pass-strength-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+@media (max-width: 900px) {
+  .auth-page { grid-template-columns: 1fr; }
+  .auth-left { display: none; }
+  .auth-right { padding: 32px 24px; }
+}

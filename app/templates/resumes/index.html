@@ -1,0 +1,61 @@
+{% extends "app_shell.html" %}
+{% block title %}My Resumes · SmartCV{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/resumes.css') }}">{% endblock %}
+{% block topbar_title %}My Resumes{% endblock %}
+
+{% block content %}
+<div class="section-header">
+  <div>
+    <h1 class="section-title">My Resumes</h1>
+    <p class="text-muted text-sm mb-0">{{ resumes|length }} resume{{ 's' if resumes|length != 1 else '' }}</p>
+  </div>
+  <a href="{{ url_for('resumes.import_resume') }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-file-import"></i> Import Resume</a>
+</div>
+
+<div class="filter-bar">
+  <div class="filter-search">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="text" placeholder="Search resumes...">
+  </div>
+</div>
+
+<div class="resume-grid">
+  <a href="{{ url_for('resumes.create') }}" class="resume-card resume-card--new">
+    <i class="fa-solid fa-circle-plus"></i>
+    <span>Create New Resume</span>
+  </a>
+
+  {% for resume in resumes %}
+  <div class="resume-card">
+    <a href="{{ url_for('resumes.edit', resume_id=resume.id) }}" class="resume-card-thumb"><i class="fa-solid fa-file-lines"></i></a>
+    <div class="resume-card-body">
+      <div class="resume-card-title">{{ resume.title }}</div>
+      <div class="resume-card-meta">Updated {{ resume.updated_at.strftime('%b %d, %Y') }}</div>
+      <div class="resume-card-scores">
+        <span class="badge badge-primary">{{ resume.ats_score|round|int }} ATS</span>
+        <span class="badge badge-accent">{{ resume.resume_score|round|int }} Overall</span>
+      </div>
+      <div class="resume-card-actions">
+        <a href="{{ url_for('resumes.edit', resume_id=resume.id) }}" class="btn btn-outline btn-sm">Edit</a>
+        <a href="{{ url_for('resumes.export_pdf_route', resume_id=resume.id) }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-file-pdf"></i></a>
+        <form method="POST" action="{{ url_for('resumes.duplicate', resume_id=resume.id) }}" style="display:inline;">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-outline btn-sm"><i class="fa-solid fa-copy"></i></button>
+        </form>
+        <form method="POST" action="{{ url_for('resumes.delete', resume_id=resume.id) }}"
+              onsubmit="return confirm('Delete this resume permanently?');" style="display:inline;">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% if not resumes %}
+<p class="text-muted text-sm" style="margin-top: 20px;">
+  The full resume builder (sections, drag &amp; drop, templates) arrives in Phase 3 — creation, rename, duplicate, delete, auto-save and history are all live now.
+</p>
+{% endif %}
+{% endblock %}

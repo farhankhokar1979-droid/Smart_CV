@@ -1,0 +1,32 @@
+{% extends "app_shell.html" %}
+{% block title %}Create Resume · SmartCV{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/resumes.css') }}">{% endblock %}
+{% block topbar_title %}Create Resume{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 520px;">
+  <div class="card-header">
+    <h2 class="card-title"><i class="fa-solid fa-file-circle-plus"></i> Create Resume</h2>
+  </div>
+  <div class="card-body">
+    <form method="POST" novalidate>
+      {{ form.hidden_tag() }}
+      <div class="form-group">
+        {{ form.title.label(class="form-label") }}
+        {{ form.title(class="form-control", placeholder="e.g. Software Engineer Resume") }}
+        {% for error in form.title.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+      </div>
+      <div class="form-group">
+        {{ form.job_title.label(class="form-label") }}
+        {{ form.job_title(class="form-control", placeholder="e.g. Backend Developer") }}
+        {% for error in form.job_title.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+        <div class="form-hint">Used later by the AI Job Matcher and Template Recommender.</div>
+      </div>
+      <div class="flex-gap">
+        {{ form.submit(class="btn btn-primary") }}
+        <a href="{{ url_for('resumes.index') }}" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

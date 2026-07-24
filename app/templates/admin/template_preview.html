@@ -1,0 +1,22 @@
+{% extends "app_shell.html" %}
+{% block title %}Preview · {{ t.name }}{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">{% endblock %}
+{% block topbar_title %}Template Preview{% endblock %}
+
+{% block content %}
+<div class="section-header">
+  <div>
+    <h1 class="section-title">{{ t.name }}</h1>
+    <p class="text-muted text-sm mb-0">{{ t.category }}</p>
+  </div>
+  <a href="{{ url_for('admin.templates_list') }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-arrow-left"></i> Back</a>
+</div>
+
+<div class="card">
+  <div class="card-body" style="background: #f0f0f5; padding: 32px;">
+    <div style="box-shadow: var(--shadow-lg); border-radius: 4px; overflow: hidden;">
+      {{ rendered_html|safe }}
+    </div>
+  </div>
+</div>
+{% endblock %}

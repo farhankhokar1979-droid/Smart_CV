@@ -1,0 +1,58 @@
+{% extends "app_shell.html" %}
+{% block title %}Choose Template · {{ resume.title }}{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/resumes.css') }}">{% endblock %}
+{% block topbar_title %}Choose a Template{% endblock %}
+
+{% block content %}
+<div class="section-header">
+  <div>
+    <h1 class="section-title">Templates</h1>
+    <p class="text-muted text-sm mb-0">Pick a look for "{{ resume.title }}" — you can change this anytime.</p>
+    {% if recommended_category %}
+      <p class="text-sm mt-4"><i class="fa-solid fa-star text-violet"></i> Recommended for you: <span class="badge badge-primary">{{ recommended_category }}</span></p>
+    {% endif %}
+  </div>
+  <a href="{{ url_for('resumes.edit', resume_id=resume.id) }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-arrow-left"></i> Back to Editor</a>
+</div>
+
+{% if not grouped %}
+<div class="card"><div class="card-body">
+  <div class="empty-state">
+    <i class="fa-solid fa-layer-group"></i>
+    <p>No templates available yet — an admin needs to add some in the Admin Panel.</p>
+  </div>
+</div></div>
+{% endif %}
+
+{% for category, templates in grouped.items() %}
+<h3 class="text-sm font-bold mb-2" style="margin-top: 20px;">{{ category }}</h3>
+<div class="resume-grid mb-4">
+  {% for t in templates %}
+  <div class="resume-card {% if resume.template_id == t.id %}is-selected{% endif %}" style="{% if resume.template_id == t.id %}border-color: var(--violet); box-shadow: 0 0 0 3px rgba(109,40,217,.15);{% endif %}">
+    {% if t.thumbnail_image %}
+      <div class="resume-card-thumb" style="padding: 0; overflow: hidden;">
+        <img src="{{ url_for('static', filename=t.thumbnail_image) }}" style="width: 100%; height: 100%; object-fit: cover;" alt="{{ t.name }} preview">
+      </div>
+    {% else %}
+      <div class="resume-card-thumb" style="background: {{ t.thumbnail_color }}22; color: {{ t.thumbnail_color }};">
+        <i class="fa-solid fa-file-lines"></i>
+      </div>
+    {% endif %}
+    <div class="resume-card-body">
+      <div class="resume-card-title">{{ t.name }}</div>
+      <div class="resume-card-meta">{{ t.description or t.category }}</div>
+      <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="template_id" value="{{ t.id }}">
+        {% if resume.template_id == t.id %}
+          <button type="button" class="btn btn-primary btn-sm btn-block" disabled><i class="fa-solid fa-check"></i> Selected</button>
+        {% else %}
+          <button type="submit" class="btn btn-outline btn-sm btn-block">Use This Template</button>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endfor %}
+{% endblock %}

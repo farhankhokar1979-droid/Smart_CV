@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block body %}
+{% include "partials/sidebar.html" %}
+
+<div class="main-content">
+  {% include "partials/topbar.html" %}
+  {% include "partials/flash_messages.html" %}
+
+  <div class="page-body">
+    {% block content %}{% endblock %}
+  </div>
+</div>
+{% endblock %}
+
+{% block page_js %}
+<script>
+  (function () {
+    var sidebar = document.querySelector(".sidebar");
+    var toggle = document.getElementById("sidebarToggle");
+    if (localStorage.getItem("smartcv_sidebar_collapsed") === "true") {
+      sidebar.classList.add("collapsed");
+    }
+    if (toggle) {
+      toggle.addEventListener("click", function () {
+        sidebar.classList.toggle("collapsed");
+        localStorage.setItem("smartcv_sidebar_collapsed", sidebar.classList.contains("collapsed"));
+      });
+    }
+    document.querySelectorAll(".alert").forEach(function (el) {
+      setTimeout(function () {
+        el.style.animation = "alertOut .3s ease forwards";
+        setTimeout(function () { el.remove(); }, 300);
+      }, 5000);
+    });
+  })();
+</script>
+{% endblock %}

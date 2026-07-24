@@ -1,0 +1,289 @@
+{% extends "app_shell.html" %}
+{% block title %}{{ resume.title }} · SmartCV{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/resumes.css') }}">{% endblock %}
+{% block topbar_title %}Editing: {{ resume.title }}{% endblock %}
+
+{% block content %}
+<div class="section-header">
+  <div>
+    <h1 class="section-title">{{ resume.title }}</h1>
+    <p class="text-muted text-sm mb-0" id="saveStatus">
+      <i class="fa-solid fa-circle-check text-violet"></i> Auto-saved
+    </p>
+  </div>
+  <div class="flex-gap">
+    <a href="{{ url_for('resumes.ai_dashboard', resume_id=resume.id) }}" class="btn btn-accent btn-sm"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Assistant</a>
+    <a href="{{ url_for('resumes.choose_template', resume_id=resume.id) }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-swatchbook"></i> Template</a>
+    <a href="{{ url_for('resumes.customize', resume_id=resume.id) }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-sliders"></i> Customize</a>
+    <a href="{{ url_for('resumes.preview', resume_id=resume.id) }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-eye"></i> Preview</a>
+    <a href="{{ url_for('resumes.history', resume_id=resume.id) }}" class="btn btn-outline btn-sm">
+      <i class="fa-solid fa-clock-rotate-left"></i> History
+    </a>
+    <form method="POST" action="{{ url_for('resumes.duplicate', resume_id=resume.id) }}" style="display:inline;">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="btn btn-outline btn-sm"><i class="fa-solid fa-copy"></i> Duplicate</button>
+    </form>
+    <a href="{{ url_for('resumes.index') }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-arrow-left"></i> Back</a>
+  </div>
+</div>
+
+<div class="builder-section">
+  <div class="builder-section-header">
+    <h2 class="card-title mb-0"><i class="fa-solid fa-id-card"></i> Resume Basics</h2>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label class="form-label">Resume Title</label>
+      <input type="text" id="titleInput" class="form-control" value="{{ resume.title }}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Target Job Title</label>
+      <input type="text" id="jobTitleInput" class="form-control" value="{{ resume.job_title or '' }}">
+    </div>
+  </div>
+  <div class="text-muted text-sm" style="display:flex; align-items:center; gap:8px; margin-top: -6px;">
+    <i class="fa-solid fa-circle-info"></i>
+    Contact info, phone, address, and social links come from your
+    <a href="{{ url_for('profile.edit') }}">Profile</a> (shared across every resume) — edit them there.
+  </div>
+</div>
+
+<!-- ── SECTIONS (drag & drop reorder) ─────────────────────── -->
+<div id="sectionsContainer">
+  {% for item in sections_data %}
+  <div class="builder-section" draggable="true" data-section-id="{{ item.section.id }}">
+    <div class="builder-section-header">
+      <h2 class="card-title mb-0">
+        <span class="builder-drag-handle"><i class="fa-solid fa-grip-vertical"></i></span>
+        <i class="{{ item.meta.icon }}"></i> {{ item.meta.label }}
+        {% if item.section.is_hidden %}<span class="badge badge-secondary">Hidden</span>{% endif %}
+        {% if item.section.column == "sidebar" %}<span class="badge badge-accent">Sidebar</span>{% endif %}
+      </h2>
+      <div class="flex-gap">
+        <form method="POST" action="{{ url_for('resumes.set_section_column', resume_id=resume.id, section_id=item.section.id) }}"
+              title="Only affects two-column templates">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-outline btn-sm">
+            {% if item.section.column == "sidebar" %}
+              <i class="fa-solid fa-arrow-left"></i> Move to Main
+            {% else %}
+              <i class="fa-solid fa-arrow-right"></i> Move to Sidebar
+            {% endif %}
+          </button>
+        </form>
+        <form method="POST" action="{{ url_for('resumes.toggle_section_hide', resume_id=resume.id, section_id=item.section.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-outline btn-sm">
+            <i class="fa-solid {{ 'fa-eye' if item.section.is_hidden else 'fa-eye-slash' }}"></i>
+          </button>
+        </form>
+        <form method="POST" action="{{ url_for('resumes.delete_section', resume_id=resume.id, section_id=item.section.id) }}"
+              onsubmit="return confirm('Remove this whole section?');">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+        </form>
+      </div>
+    </div>
+
+    {% if item.meta.single_entry %}
+      {# Summary / Objective: one textarea, one Save button #}
+      {% for e in item.entries %}
+      <form method="POST" action="{{ url_for('resumes.update_entry', resume_id=resume.id, section_id=item.section.id, entry_id=e.obj.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-group mb-2">
+          <textarea name="text" class="form-control" rows="4" placeholder="Write your {{ item.meta.label|lower }}...">{{ e.data.get('text', '') }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-check"></i> Save</button>
+      </form>
+      {% endfor %}
+    {% else %}
+      {# Multi-entry sections: list of entries with drag-to-reorder, plus an add form #}
+      <div class="entry-list" data-section-entries="{{ item.section.id }}">
+        {% for e in item.entries %}
+        <div class="card mb-2" draggable="true" data-entry-id="{{ e.obj.id }}" style="background: var(--surface-2);">
+          <div class="card-body" style="padding: 14px 16px;">
+            <form method="POST" action="{{ url_for('resumes.update_entry', resume_id=resume.id, section_id=item.section.id, entry_id=e.obj.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <div class="flex-gap mb-2">
+                <span class="builder-drag-handle"><i class="fa-solid fa-grip-vertical"></i></span>
+                <span class="text-sm font-bold" style="flex:1;">Entry</span>
+                <button type="submit" class="btn btn-outline btn-sm"><i class="fa-solid fa-check"></i></button>
+              </div>
+              <div class="form-row">
+                {% for field_name, field_label, field_type in item.meta.fields %}
+                <div class="form-group">
+                  <label class="form-label">{{ field_label }}</label>
+                  {% if field_type == "textarea" %}
+                    <textarea name="{{ field_name }}" class="form-control" rows="2">{{ e.data.get(field_name, '') }}</textarea>
+                  {% else %}
+                    <input type="text" name="{{ field_name }}" class="form-control" value="{{ e.data.get(field_name, '') }}">
+                  {% endif %}
+                </div>
+                {% endfor %}
+              </div>
+            </form>
+            <form method="POST" action="{{ url_for('resumes.delete_entry', resume_id=resume.id, section_id=item.section.id, entry_id=e.obj.id) }}"
+                  onsubmit="return confirm('Delete this entry?');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i> Remove Entry</button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <details style="margin-top: 10px;">
+        <summary class="btn btn-outline btn-sm" style="display:inline-flex; cursor:pointer;">
+          <i class="fa-solid fa-plus"></i> Add {{ item.meta.label }} Entry
+        </summary>
+        <form method="POST" action="{{ url_for('resumes.add_entry', resume_id=resume.id, section_id=item.section.id) }}" class="mt-4">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="form-row">
+            {% for field_name, field_label, field_type in item.meta.fields %}
+            <div class="form-group">
+              <label class="form-label">{{ field_label }}</label>
+              {% if field_type == "textarea" %}
+                <textarea name="{{ field_name }}" class="form-control" rows="2"></textarea>
+              {% else %}
+                <input type="text" name="{{ field_name }}" class="form-control">
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Add Entry</button>
+        </form>
+      </details>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+
+{% if not sections_data %}
+<div class="card">
+  <div class="card-body">
+    <div class="empty-state">
+      <i class="fa-solid fa-layer-group"></i>
+      <p>No sections yet — add your first section below.</p>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- ── ADD SECTION ─────────────────────────────────────────── -->
+{% if available_types %}
+<div class="card">
+  <div class="card-header">
+    <h2 class="card-title mb-0"><i class="fa-solid fa-square-plus"></i> Add a Section</h2>
+  </div>
+  <div class="card-body">
+    <div class="flex-gap" style="flex-wrap: wrap;">
+      {% for key, meta in available_types %}
+        {% if key != "custom" %}
+        <form method="POST" action="{{ url_for('resumes.add_section', resume_id=resume.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="section_type" value="{{ key }}">
+          <button type="submit" class="btn btn-outline btn-sm"><i class="{{ meta.icon }}"></i> {{ meta.label }}</button>
+        </form>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="divider"></div>
+    <p class="text-sm font-bold mb-2"><i class="fa-solid fa-star"></i> Add a Custom Section</p>
+    <p class="text-muted text-sm mb-2">For anything not covered above — Hobbies, Publications, Awards, etc.</p>
+    <form method="POST" action="{{ url_for('resumes.add_section', resume_id=resume.id) }}" class="flex-gap" style="flex-wrap: wrap; align-items: flex-end;">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="section_type" value="custom">
+      <div class="form-group mb-0" style="flex: 1; min-width: 200px;">
+        <label class="form-label">Section Title</label>
+        <input type="text" name="custom_label" class="form-control" placeholder="e.g. Hobbies, Publications, Awards">
+      </div>
+      <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Add Custom Section</button>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+<div class="mt-4">
+  <form method="POST" action="{{ url_for('resumes.delete', resume_id=resume.id) }}"
+        onsubmit="return confirm('Delete this resume permanently?');">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i> Delete Resume</button>
+  </form>
+</div>
+{% endblock %}
+
+{% block page_js %}
+{{ super() }}
+<script>
+  (function () {
+    var titleInput = document.getElementById("titleInput");
+    var jobTitleInput = document.getElementById("jobTitleInput");
+    var status = document.getElementById("saveStatus");
+    var timer = null;
+    var resumeId = {{ resume.id }};
+
+    function scheduleSave() {
+      status.innerHTML = '<i class="fa-solid fa-circle-notch"></i> Saving...';
+      clearTimeout(timer);
+      timer = setTimeout(save, 1200);
+    }
+    function save() {
+      fetch("/resumes/" + resumeId + "/autosave", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: titleInput.value, job_title: jobTitleInput.value })
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          status.innerHTML = '<i class="fa-solid fa-circle-check text-violet"></i> Saved at ' + data.saved_at;
+        })
+        .catch(function () {
+          status.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-red"></i> Save failed';
+        });
+    }
+    titleInput.addEventListener("input", scheduleSave);
+    jobTitleInput.addEventListener("input", scheduleSave);
+
+    // ── Drag & drop: section reordering ──
+    var container = document.getElementById("sectionsContainer");
+    var dragged = null;
+
+    function setupDragDrop(root, itemSelector, attr, endpointFn, payloadKey) {
+      root.querySelectorAll(itemSelector).forEach(function (el) {
+        el.addEventListener("dragstart", function () { dragged = el; el.style.opacity = "0.4"; });
+        el.addEventListener("dragend", function () { el.style.opacity = "1"; });
+        el.addEventListener("dragover", function (e) { e.preventDefault(); });
+        el.addEventListener("drop", function (e) {
+          e.preventDefault();
+          if (dragged && dragged !== el) {
+            var items = Array.from(root.querySelectorAll(itemSelector));
+            var draggedIdx = items.indexOf(dragged);
+            var targetIdx = items.indexOf(el);
+            if (draggedIdx < targetIdx) {
+              el.parentNode.insertBefore(dragged, el.nextSibling);
+            } else {
+              el.parentNode.insertBefore(dragged, el);
+            }
+            var ids = Array.from(root.querySelectorAll(itemSelector)).map(function (n) { return n.getAttribute(attr); });
+            fetch(endpointFn(), {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify((function () { var o = {}; o[payloadKey] = ids; return o; })())
+            });
+          }
+        });
+      });
+    }
+
+    setupDragDrop(container, "[data-section-id]", "data-section-id",
+      function () { return "/resumes/" + resumeId + "/sections/reorder"; }, "section_ids");
+
+    document.querySelectorAll("[data-section-entries]").forEach(function (list) {
+      var sectionId = list.getAttribute("data-section-entries");
+      setupDragDrop(list, "[data-entry-id]", "data-entry-id",
+        function () { return "/resumes/" + resumeId + "/sections/" + sectionId + "/entries/reorder"; }, "entry_ids");
+    });
+  })();
+</script>
+{% endblock %}

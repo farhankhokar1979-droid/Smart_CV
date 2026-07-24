@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Create Account · SmartCV{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">{% endblock %}
+
+{% block body %}
+{% include "partials/flash_messages.html" %}
+<div class="auth-page">
+  <div class="auth-left">
+    <div class="auth-brand">
+      <div class="auth-brand-icon"><i class="fa-solid fa-file-lines"></i></div>
+      <div class="auth-brand-name">Smart<span>CV</span></div>
+    </div>
+    <h1 class="auth-left-title">Your next job starts with a stronger resume</h1>
+    <p class="auth-left-sub">Create ATS-optimized resumes with offline AI — free, private, and fast.</p>
+    <div class="auth-features">
+      <div class="auth-feature">
+        <div class="auth-feature-icon"><i class="fa-solid fa-file-import"></i></div>
+        <div class="auth-feature-text">Import an existing resume (PDF/DOCX)</div>
+      </div>
+      <div class="auth-feature">
+        <div class="auth-feature-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+        <div class="auth-feature-text">Match your resume against any job description</div>
+      </div>
+      <div class="auth-feature">
+        <div class="auth-feature-icon"><i class="fa-solid fa-file-export"></i></div>
+        <div class="auth-feature-text">Export polished PDF or DOCX</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-right">
+    <div class="auth-form-box">
+      <h2 class="auth-form-title">Create your account</h2>
+      <p class="auth-form-sub">Already have an account? <a href="{{ url_for('auth.login') }}">Log in</a></p>
+
+      <form method="POST" novalidate>
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+          {{ form.full_name.label(class="form-label") }}
+          <div class="input-group">
+            <i class="fa-regular fa-user input-icon"></i>
+            {{ form.full_name(class="form-control", placeholder="Jane Doe") }}
+          </div>
+          {% for error in form.full_name.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+        </div>
+
+        <div class="form-group">
+          {{ form.email.label(class="form-label") }}
+          <div class="input-group">
+            <i class="fa-regular fa-envelope input-icon"></i>
+            {{ form.email(class="form-control", placeholder="you@example.com") }}
+          </div>
+          {% for error in form.email.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+        </div>
+
+        <div class="form-group">
+          {{ form.password.label(class="form-label") }}
+          <div class="input-group">
+            <i class="fa-solid fa-lock input-icon"></i>
+            {{ form.password(class="form-control", placeholder="At least 8 characters") }}
+          </div>
+          {% for error in form.password.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+        </div>
+
+        <div class="form-group">
+          {{ form.confirm_password.label(class="form-label") }}
+          <div class="input-group">
+            <i class="fa-solid fa-lock input-icon"></i>
+            {{ form.confirm_password(class="form-control") }}
+          </div>
+          {% for error in form.confirm_password.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+        </div>
+
+        <button type="submit" class="btn-auth">
+          <i class="fa-solid fa-user-plus"></i> Create Account
+        </button>
+      </form>
+
+      <div class="auth-footer">By signing up you agree to build great resumes.</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,70 @@
+/* ============================================================
+   HOME.CSS — templates/home.html (guest landing page)
+   SmartCV — violet/teal palette, matches base.css component system
+   ============================================================ */
+
+.landing-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 40px;
+}
+.landing-nav-brand { display: flex; align-items: center; gap: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 19px; color: white; }
+
+.landing-hero {
+  background: linear-gradient(160deg, var(--violet-dark) 0%, var(--violet-mid) 50%, var(--violet-light) 100%);
+  color: white;
+  padding: 90px 40px 110px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.landing-hero::before {
+  content: ''; position: absolute; top: -100px; left: -100px;
+  width: 400px; height: 400px;
+  background: rgba(255,255,255,.05);
+  border-radius: 50%;
+}
+.landing-hero::after {
+  content: ''; position: absolute; bottom: -120px; right: -80px;
+  width: 300px; height: 300px;
+  background: rgba(255,255,255,.04);
+  border-radius: 50%;
+}
+.landing-hero h1 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 2.5rem; font-weight: 900;
+  max-width: 720px; margin: 0 auto 16px;
+  position: relative; z-index: 1;
+}
+.landing-hero p {
+  color: rgba(255,255,255,.85);
+  max-width: 560px; margin: 0 auto 28px;
+  position: relative; z-index: 1;
+}
+.landing-hero .btn { margin: 0 6px; position: relative; z-index: 1; }
+
+.landing-features {
+  max-width: 1080px;
+  margin: -55px auto 60px;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  position: relative;
+  z-index: 2;
+}
+.feature-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  padding: 24px;
+}
+.feature-card-icon {
+  width: 44px; height: 44px;
+  border-radius: var(--radius-sm);
+  background: var(--violet-pale);
+  color: var(--violet);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 19px;
+  margin-bottom: 14px;
+}
+.feature-card h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15.5px; margin-bottom: 6px; }
